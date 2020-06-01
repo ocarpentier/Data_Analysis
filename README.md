@@ -1,20 +1,22 @@
 # Data Analysis scripts
 
-# To do:
+## Missing
 
-## Relative paths in all scripts
-## Pressure analysis
-  - Separation point from pressure data
-  - Separation point from pressure data
-  - Comparison
-    - Figure some numerical metric to compare both points (eg: difference in position in degrees wrt sphere center)
-## Subtraction of potential flow v.f. to ensemble averaged v.f.
-  - Maximum difference
-    - Positive
-    - Negative
-  - Standard deviation
-## Subtraction of CFD v.f. to ensemble averaged v.f.
-  - Maximum difference
-    - Positive
-    - Negative
-  - Standard deviation
+### Relative paths in all scripts
+
+### Stagnation line 
+  - 1. stagnation_ensemble_averaging
+
+### Pressure 
+  - 4. ensemble_averaging_separation
+    - Separation point from ensemble averaging data
+  
+### Subtraction of potential flow v.f. to ensemble averaged v.f.
+  - 5. comparison_potential_flow
+    - Maximum difference plot (positive, negative)
+    - Standard deviation
+
+### Subtraction of CFD v.f. to ensemble averaged v.f.
+  - 5. comparison_cfd
+  - Maximum difference plot (positive, negative)
+    - Standard deviation
