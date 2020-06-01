@@ -6,7 +6,7 @@ from scipy.signal import lfilter
 from scipy.signal import savgol_filter
 import scipy.optimize as optimize
 
-from mpl_plotting_methods import MatPlotLibPublicationPlotter as mplPlotter
+from mpl_plotter_mpl_plotting_methods import MatPlotLibPublicationPlotter as mplPlotter
 
 # Plot setup
 fig = mplPlotter(light=True).setup2d(figsize=(7, 15))

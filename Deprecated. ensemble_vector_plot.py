@@ -15,8 +15,8 @@ from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from matplotlib.patches import Circle
 from matplotlib.patches import Rectangle
 
-from mpl_plotting_methods import MatPlotLibPublicationPlotter as mplPlotter
-from colormaps import ColorMaps
+from mpl_plotter_mpl_plotting_methods import MatPlotLibPublicationPlotter as mplPlotter
+from mpl_plotter_colormaps import ColorMaps
 
 """
 Uncertainty of mean estimates

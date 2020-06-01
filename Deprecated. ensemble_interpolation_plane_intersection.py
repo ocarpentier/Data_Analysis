@@ -3,8 +3,8 @@ import numpy as np
 
 import plotly.graph_objs as go
 
-from ply_plotting_methods import PlotLyPublicationPlotter as plyPlotter
-from colormaps import ColorMaps
+from mpl_plotter_ply_plotting_methods import PlotLyPublicationPlotter as plyPlotter
+from mpl_plotter_colormaps import ColorMaps
 
 """
 Setup

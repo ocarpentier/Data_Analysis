@@ -14,8 +14,8 @@ from pylab import *
 from numpy import sin, cos
 from skimage import measure
 
-from mock_data import MockData
-from colormaps import ColorMaps
+from mpl_plotter_mock_data import MockData
+from mpl_plotter_colormaps import ColorMaps
 
 
 class MatPlotLibPublicationPlotter:

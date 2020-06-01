@@ -3,9 +3,9 @@ import pandas as pd
 import plotly.io as pio
 import plotly.graph_objs as go
 
-from data_input import Data3D
+from mpl_plotter_data_input import Data3D
 
-from colormaps import ColorMaps
+from mpl_plotter_colormaps import ColorMaps
 
 
 class PlotLyPublicationPlotter:

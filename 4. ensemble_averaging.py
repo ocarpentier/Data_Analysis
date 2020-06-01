@@ -13,7 +13,7 @@ from matplotlib.patches import Circle
 from matplotlib.patches import Rectangle
 
 
-from mpl_plotting_methods import MatPlotLibPublicationPlotter as mplPlotter
+from mpl_plotter_mpl_plotting_methods import MatPlotLibPublicationPlotter as mplPlotter
 
 """
 Uncertainty of mean estimates
