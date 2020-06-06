@@ -262,6 +262,7 @@ except:
 """
 error_metrics_path = os.path.join(data_path, 'num_error_metrics')
 
+
 def num_error_metrics(method, field_u, field_v, field_w):
 
     """
@@ -307,11 +308,6 @@ def num_error_metrics(method, field_u, field_v, field_w):
 
     np.savetxt(os.path.join(error_metrics_path, '_' + method + '.txt'), all_met_array.T)
 
-num_error_metrics(method = 'rbf', field_u=u_mosaic, field_v=v_mosaic, field_w=w_mosaic)
-
-
-sep_point_path = os.path.join(data_path, 'sep_point_path')
-
 
 def separation_point(method, field_u, field_w):
     radius = 80
@@ -349,8 +345,10 @@ def separation_point(method, field_u, field_w):
 
     return u_tab, w_tab, theta
 
+
 u_tab, w_tab, theta = separation_point(method='rbf', field_u=u_mosaic, field_w=w_mosaic)
 
+num_error_metrics(method = 'rbf', field_u=u_mosaic, field_v=v_mosaic, field_w=w_mosaic)
 
 """
 ------------------------------------------------------------------------------------------------------------------------
