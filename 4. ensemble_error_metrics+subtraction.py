@@ -208,9 +208,9 @@ def find_real_extremes(mosaic):
 """
 Ensemble averaging plot setup
 """
+plane = 'y=0'
 
 fill = 0
-plane = 'x=-10'
 versions = ['rbf', 'polynomial']
 version = versions[0]
 unified_color = True
@@ -278,19 +278,79 @@ def num_error_metrics(method, field_u, field_v, field_w):
     max/min
     """
     # u
+    u_max = field_u.max()
+    u_min = field_u.min()
     # v
+    v_max = field_v.max()
+    v_min = field_v.min()
     # w
-
+    w_max = field_w.max()
+    w_min = field_w.min()
     """
     std
     """
     # u
+    u_std = field_u.std()
     # v
+    v_std = field_v.std()
     # w
+    w_std = field_w.std()
 
-    np.savetxt(os.path.join(error_metrics_path, '_' + method + '.txt'))
+    #names = ['u', 'v', 'w']
+    means = [u_mean, v_mean, w_mean]
+    max = [u_max, v_max, w_max]
+    min = [u_min, v_min, w_min]
+    std = [u_std, v_std, w_std]
+
+    all_met = [means, max, min, std]
+    all_met_array = np.vstack(all_met)
+
+    np.savetxt(os.path.join(error_metrics_path, '_' + method + '.txt'), all_met_array.T)
 
 num_error_metrics(method = 'rbf', field_u=u_mosaic, field_v=v_mosaic, field_w=w_mosaic)
+
+
+sep_point_path = os.path.join(data_path, 'sep_point_path')
+
+
+def separation_point(method, field_u, field_w):
+    radius = 80
+    theta = np.linspace(0,120,120)
+    theta = theta*2*np.pi/360
+    x = 200 - radius * np.cos(theta)
+    y = 150 + radius * np.sin(theta)
+
+    j = np.floor(x/10).astype(int)
+    i = np.floor(y/10).astype(int)
+
+    dif_utab = []
+    u_tab = []
+    w_tab = []
+
+    print(i[0])
+    aux_u = field_u[i[0]][j[0]]
+
+
+    for k in range(0,120):
+        ii = i[k]
+        jj = j[k]
+        val_u = field_u[ii][jj]
+        val_w = field_w[ii][jj]
+
+        dif_u = val_u - aux_u
+        dif_utab.append(dif_u)
+
+        u_tab.append(val_u)
+        w_tab.append(val_w)
+
+    max_idx_dif = max(range(len(dif_utab)), key = dif_utab.__getitem__) # idx max diftab
+
+    theta_sep = theta[max_idx_dif]
+
+    return u_tab, w_tab, theta
+
+u_tab, w_tab, theta = separation_point(method='rbf', field_u=u_mosaic, field_w=w_mosaic)
+
 
 """
 ------------------------------------------------------------------------------------------------------------------------
@@ -454,3 +514,4 @@ ax1 = mplPlotter(fig=fig, shape_and_position=111).heatmap(array=mosaic, resize_a
                                                           more_subplots_left=True,
                                                           shrink=shrink
                                                           )
+
