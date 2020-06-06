@@ -243,3 +243,192 @@ except:
     u_mosaic, v_mosaic, w_mosaic = interpolate_all(fill=fill, plane=plane, version=version, quirk=quirk, filenamestart=filenamestart, var=re.findall(r'-?\d+', plane)[0], f=f)
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------END OF INTERPOLATION------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+"""
+------------------------------------------------------------------------------------------------------------------------
+1. Numerical error metrics
+      All planes: x=10, x=-10, z=0, y=0
+          RBF
+          2D Polynomial interpolation             --->         num_metrics.txt
+          Potential flow
+          CFD
+------------------------------------------------------------------------------------------------------------------------
+"""
+
+def mean():
+    pass
+
+def max_min():
+    pass
+
+def std():
+    pass
+
+"""
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+2. Field subtraction
+        - potential flow file
+        - CFD flow file 
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+"""
+
+comp = 'u'
+ens_field = 'rbf'
+comp_field = 'pot'
+
+# Paths
+plane_path = os.path.join(ens_avg_path, plane)
+comp_field_path = os.path.join(data_path, 'comparison_fields')
+sub_field_path = os.path.join(data_path, 'subtracted_fields')
+
+def subtraction(plane='x=10', comp = 'u', ens_field='rbf', comparison_field='pot'):
+    """
+    :param ens_field: mosaics
+    :param comp_field:
+        potential flow
+        cfd
+    """
+
+    ens_field = np.loadtxt(os.path.join(plane_path, '{}_{}.txt'.format(comp, ens_field)))
+    comp_field = np.loadtxt(os.path.join(comp_field_path, '{}.txt'.format(comparison_field)))
+
+    dif_field = ens_field - comp_field
+
+    dif_field = comp + '_' + ens_field + '_vs_' + comp_field
+    np.savetxt(os.path.join(sub_field_path, '{}.txt'.format(dif_field), dif_field))
+
+subtraction(comp=comp, ens_field=ens_field, comparison_field=comp_field)
+
+"""
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+3. Plotting subtracted field
+        - subtracted fields
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+"""
+
+diff_field = np.loadtxt(os.path.join(sub_field_path, '{}_{}_vs_{}.txt'.format(comp, ens_field, comp_field)))
+
+# Fields in plot
+ens_field = 'RBF'
+comp_field = 'Potential Flow'
+
+# Figure setup
+fig = mplPlotter(light=True).setup2d(figsize=(8, 8))
+
+y_ticks = 8
+x_ticks = 9 if plane == 'y=0' or plane == 'z=0' else 8
+degree = 2
+tsize=20
+axsize = 20
+pad = 15
+tit_y = 1.05
+cbtit_size = 15
+fillsphere = True
+aspect = 1
+
+if plane == 'z=0' or plane == 'y=0':
+    x_bounds = [0, 40]
+    y_bounds = [0, 30]
+    if version == 'polynomial':
+        values = True
+else:
+    x_bounds = [0, 30]
+    y_bounds = [0, 30]
+    if version == 'polynomial' and plane == 'x=-10':
+        values = False
+
+if unified_color is True:
+    values = True
+
+print(x_bounds)
+
+if values is True:
+    if plane == 'x=-10':
+        actualmax1 = 12
+        actualmin1 = 5
+
+        actualmax2 = 2
+        actualmin2 = -2
+
+        actualmax3 = 2.5
+        actualmin3 = -2.5
+    if plane == 'x=10':
+        actualmax1 = 15
+        actualmin1 = -6
+
+        actualmax2 = 6
+        actualmin2 = -6
+
+        actualmax3 = 5
+        actualmin3 = -5
+    if plane == 'y=0' or plane == 'z=0':
+        actualmax1 = 14.5
+        actualmin1 = -3
+
+        actualmax2 = 6
+        actualmin2 = -6
+
+        actualmax3 = 6
+        actualmin3 = -6
+else:
+    actualmax1 = None
+    actualmin1 = None
+
+    actualmax2 = None
+    actualmin2 = None
+
+    actualmax3 = None
+    actualmin3 = None
+
+mosaic = diff_field
+
+ax1 = mplPlotter(fig=fig, shape_and_position=111).heatmap(array=mosaic, resize_axes=True, aspect=aspect,
+                                                          tick_ndecimals=1,
+                                                          xresize_pad=0, yresize_pad=0,
+                                                          x_bounds=x_bounds,
+                                                          y_bounds=y_bounds,
+                                                          cb_vmax=actualmax1 if not isinstance(actualmax1,
+                                                                                               type(None)) else
+                                                          find_real_extremes(mosaic)[0],
+                                                          cb_vmin=actualmin1 if not isinstance(actualmin1,
+                                                                                               type(None)) else
+                                                          find_real_extremes(mosaic)[1],
+                                                          plot_title='Subtracted velocity fields: {} vs {} '.format(
+                                                                     ens_field, comp_field) + '\n' +
+                                                                     'Velocity component: ' + r'$\mathit{' + comp + '}$',
+                                                          color_bar=True,
+                                                          cb_axis_labelpad=10,
+                                                          title_size=tsize,
+                                                          title_y=tit_y,
+                                                          custom_x_ticklabels=(
+                                                          -20, 20) if plane == 'y=0' or plane == 'z=0' else (-15, 15),
+                                                          custom_y_ticklabels=(-15, 15),
+                                                          xaxis_labelpad=pad - 10,
+                                                          yaxis_labelpad=pad + 10,
+                                                          xaxis_label_size=axsize,
+                                                          yaxis_label_size=axsize,
+                                                          xaxis_bold=True,
+                                                          yaxis_bold=True,
+                                                          x_label='x $[cm]$', y_label='z $[cm]$',
+                                                          cb_top_title=True,
+                                                          cb_top_title_pad=cbtit_y,
+                                                          cb_top_title_x=-1,
+                                                          cb_title='{} $[m/s]$'.format(comp),
+                                                          cb_title_weight='bold',
+                                                          cb_title_size=cbtit_size,
+                                                          cb_top_title_y=1.1,
+                                                          x_tick_number=x_ticks,
+                                                          y_tick_number=y_ticks,
+                                                          more_subplots_left=True,
+                                                          shrink=shrink
+                                                          )
