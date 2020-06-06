@@ -268,8 +268,11 @@ def num_error_metrics(method, field_u, field_v, field_w):
     mean
     """
     # u
+    u_mean = field_u.mean()
     # v
+    v_mean = field_v.mean()
     # w
+    w_mean = field_w.mean()
 
     """
     max/min
@@ -294,7 +297,7 @@ num_error_metrics(method = 'rbf', field_u=u_mosaic, field_v=v_mosaic, field_w=w_
 ------------------------------------------------------------------------------------------------------------------------
 2. Field subtraction
         - potential flow file
-        - CFD flow file 
+        - CFD flow file
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 """
