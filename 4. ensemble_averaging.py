@@ -18,21 +18,28 @@ from mpl_plotter_mpl_plotting_methods import MatPlotLibPublicationPlotter as mpl
 """
 Uncertainty of mean estimates
 """
+data_analysis = os.path.dirname(__file__) 
+data_path = os.path.join(data_analysis, 'data') # The resource folder path
+bin_path = os.path.join(data_path, 'bins') # The image folder path
+uncertainty_path = os.path.join(data_path, 'uncertainty_mean_estimate')
+ens_avg_path = os.path.join(data_path, 'velocity_ensemble_averaged')
 
+print(bin_path)
+sys.exit()
 
 def remove_nan():
     un = pd.read_excel(
-        r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\uncertainty_mean_estimates\ErrorEst.xlsx',
+        r'C:\Users\sownd\Documents\GitHub\Data_Analysis\ErrorEst.xlsx',
         index_col=0)
     un.columns = ['u', 'v', 'w']
     un = un[un['u'] != ' nan']
     un.to_csv(
-        r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\uncertainty_mean_estimates\ErrorEst.csv')
+        r'C:\Users\sownd\Documents\GitHub\Data_Analysis\ErrorEst.csv')
 
 # remove_nan()
 
 un = pd.read_csv(
-    r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\uncertainty_mean_estimates\ErrorEst.csv',
+    r'C:\Users\sownd\Documents\GitHub\Data_Analysis\ErrorEst.csv',
     index_col=0)
 
 """
@@ -86,11 +93,11 @@ def interpolate_all(fill, plane, version, quirk, filenamestart, var, f):
                 file = '{}{}_{}_{}.xlsx'.format(quirk, k, l, var)
 
             if os.path.isfile(
-                    r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\velocity_planes_of_interest\{}\{}_wo_outliers\{}'.format(
+                    r'C:\Users\sownd\Documents\GitHub\Data_Analysis\{}\{}_wo_outliers\{}'.format(
                             plane, plane, file)):
 
                 df = pd.read_excel(
-                    r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\velocity_planes_of_interest\{}\{}_wo_outliers\{}'.format(
+                    r'C:\Users\sownd\Documents\GitHub\Data_Analysis\{}\{}_wo_outliers\{}'.format(
                         plane, plane, file))
                 df.columns = ['x', 'y', 'z', 'u', 'v', 'w']
                 x = df['x']
@@ -191,7 +198,7 @@ def interpolate_all(fill, plane, version, quirk, filenamestart, var, f):
     names = ['u', 'v', 'w']
     msics = [u_mosaic, v_mosaic, w_mosaic]
     for comp in range(3):
-        np.savetxt(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, names[comp], version), msics[comp])
+        np.savetxt(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, names[comp], version), msics[comp])
 
     return u_mosaic, v_mosaic, w_mosaic
 
@@ -208,7 +215,7 @@ Ensemble averaging plot setup
 
 fill = 0
 plane = 'y=0'
-versions = ['1.0', 'polynomial']
+versions = ['rbf', 'polynomial']
 version = versions[0]
 unified_color = True
 shrink = 0.69
@@ -233,9 +240,9 @@ if plane == 'x=-10':
 filenamestart = len(quirk)
 
 try:
-    u_mosaic = np.loadtxt(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, 'u', version))
-    v_mosaic = np.loadtxt(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, 'v', version))
-    w_mosaic = np.loadtxt(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\data\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, 'w', version))
+    u_mosaic = np.loadtxt(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, 'u', version))
+    v_mosaic = np.loadtxt(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, 'v', version))
+    w_mosaic = np.loadtxt(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\velocity_ensemble_averaged\{}\{}_{}.txt'.format(plane, 'w', version))
 except:
     interpolate_all(fill=fill, plane=plane, version=version, quirk=quirk, filenamestart=filenamestart, var=re.findall(r'-?\d+', plane)[0], f=f)
 
@@ -428,10 +435,10 @@ if surface is True:
 
     if save is True:
         if version == '1.0':
-            plt.savefig(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\images\3DRBF_Ensemble_Averaging_{}.png'.format(plane),
+            plt.savefig(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\3DRBF_Ensemble_Averaging_{}.png'.format(plane),
                         dpi=150)
         if version == 'polynomial':
-            plt.savefig(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\images\3DPolynomial_Ensemble_Averaging_{}.png'.format(plane),
+            plt.savefig(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\3DPolynomial_Ensemble_Averaging_{}.png'.format(plane),
                             dpi=150)
 
 else:
@@ -608,10 +615,10 @@ else:
 
     if save is True:
         if version == '1.0':
-            plt.savefig(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\images\3DRBF_Ensemble_Averaging_{}.png'.format(plane),
+            plt.savefig(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\3DRBF_Ensemble_Averaging_{}.png'.format(plane),
                         dpi=150)
         if version == 'polynomial':
-            plt.savefig(r'C:\Users\xXY4n\AE BSc\AE Year 2\Aerodynamics project\Data Analysis\images\3DPolynomial_Ensemble_Averaging_{}.png'.format(plane),
+            plt.savefig(r'C:\Users\sownd\Documents\GitHub\Data_Analysis\3DPolynomial_Ensemble_Averaging_{}.png'.format(plane),
                             dpi=150)
 
 plt.show()
