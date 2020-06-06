@@ -260,15 +260,34 @@ except:
           CFD
 ------------------------------------------------------------------------------------------------------------------------
 """
+error_metrics_path = os.path.join(data_path, 'num_error_metrics')
 
-def mean():
-    pass
+def num_error_metrics(method, field_u, field_v, field_w):
 
-def max_min():
-    pass
+    """
+    mean
+    """
+    # u
+    # v
+    # w
 
-def std():
-    pass
+    """
+    max/min
+    """
+    # u
+    # v
+    # w
+
+    """
+    std
+    """
+    # u
+    # v
+    # w
+
+    np.savetxt(os.path.join(error_metrics_path, '_' + method + '.txt'))
+
+num_error_metrics(method = 'rbf', field_u=u_mosaic, field_v=v_mosaic, field_w=w_mosaic)
 
 """
 ------------------------------------------------------------------------------------------------------------------------
