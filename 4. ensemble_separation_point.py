@@ -295,7 +295,7 @@ def separation_point(method, field_u, field_w):
     titlesize = 20
     axis_lbsize = 25
     tick_lbsize = 15
-    tickn = 7
+    tickn = 8
 
     fig = mplPlotter(light=True).setup2d(figsize=(8, 8))
 
@@ -314,9 +314,9 @@ def separation_point(method, field_u, field_w):
                                                                                          resize_axes=True,
                                                                                          grid=True,
                                                                                          gridlines='dotted',
-                                                                                         x_bounds=[0, 2.5],
+                                                                                         x_bounds=[0, 140/180*np.pi],
                                                                                          y_bounds=[-4, 13],
-                                                                                         custom_x_ticklabels=[0, 120],
+                                                                                         custom_x_ticklabels=[0, 140],
                                                                                          y_tick_number=tickn,
                                                                                          x_tick_number=tickn,
                                                                                          x_ticklabel_size=tick_lbsize,
