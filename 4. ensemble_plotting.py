@@ -19,11 +19,13 @@ from mpl_plotter_mpl_plotting_methods import MatPlotLibPublicationPlotter as mpl
 Uncertainty of mean estimates
 """
 data_analysis = os.path.dirname(__file__)
-data_path = os.path.join(data_analysis, 'data')
+data_path = os.path.join(data_analysis, r'data')
 img_path = os.path.join(data_analysis, 'images')
 bin_path = os.path.join(data_path, 'bins')
 uncertainty_path = os.path.join(data_path, 'uncertainty_mean_estimate')
 ens_avg_path = os.path.join(data_path, 'velocity_ensemble_averaged')
+num_metrics_path = os.path.join(data_path, 'num_error_metrics')
+int_comp_path = os.path.join(data_path, 'interpolation_comparison')
 
 def remove_nan():
     un = pd.read_excel(
@@ -45,7 +47,7 @@ RBF interpolation
     epsilon = 1
     smooth = 0.03
 """
-def rbf2d(x, y, z, x_new, y_new):
+def rbf(x, y, z, x_new, y_new):
     try:
         """
         Optimal values
@@ -55,6 +57,36 @@ def rbf2d(x, y, z, x_new, y_new):
             z=0:        500, 0.02
         """
         rbf = Rbf(x, y, z, epsilon=500, smooth=0.02)
+    except:
+        return False
+    z_new = rbf(x_new, y_new)
+    return z_new
+
+def rbf2(x, y, z, x_new, y_new):
+    try:
+        """
+        Optimal values
+            x=-10:      500, 0.02
+            x=10:       500, 0.02
+            y=0:        500, 0.02
+            z=0:        500, 0.02
+        """
+        rbf = Rbf(x, y, z, epsilon=1, smooth=0)
+    except:
+        return False
+    z_new = rbf(x_new, y_new)
+    return z_new
+
+def rbf3(x, y, z, x_new, y_new):
+    try:
+        """
+        Optimal values
+            x=-10:      500, 0.02
+            x=10:       500, 0.02
+            y=0:        500, 0.02
+            z=0:        500, 0.02
+        """
+        rbf = Rbf(x, y, z, epsilon=1, smooth=0, function='gaussian')
     except:
         return False
     z_new = rbf(x_new, y_new)
@@ -205,32 +237,64 @@ def find_real_extremes(mosaic):
     max = df.max().max()
     return max, min
 
+def clean_field():
+    # u
+    u_correction_pc = (len(u_mosaic[np.where(u_mosaic > 14.5)]) + len(u_mosaic[np.where(u_mosaic < -3)])) / (30*40)
+    u_max_threshold = u_mosaic > 14.5
+    u_mosaic[u_max_threshold] = 0
+    u_min_threshold = u_mosaic < -3
+    u_mosaic[u_min_threshold] = 0
+    # v
+    v_correction_pc = (len(v_mosaic[np.where(v_mosaic > 6)]) + len(v_mosaic[np.where(v_mosaic < -6)])) / (30*40)
+    v_max_threshold = v_mosaic > 6
+    v_mosaic[v_max_threshold] = 0
+    v_min_threshold = v_mosaic < -6
+    v_mosaic[v_min_threshold] = 0
+    #w
+    w_correction_pc = (len(w_mosaic[np.where(w_mosaic > 6)]) + len(w_mosaic[np.where(w_mosaic < -6)])) / (30*40)
+    w_max_threshold = w_mosaic > 6
+    w_mosaic[w_max_threshold] = 0
+    w_min_threshold = w_mosaic < -6
+    w_mosaic[w_min_threshold] = 0
+
+    print('u correction percent: {}'.format(u_correction_pc))
+    print('v correction percent: {}'.format(v_correction_pc))
+    print('w correction percent: {}'.format(w_correction_pc))
+
 """
 Ensemble averaging plot setup
 """
 
 fill = 0
-plane = 'x=-10'
-versions = ['rbf', 'polynomial']
-version = versions[0]
+plane = 'y=0'
+versions = ['rbf', 'rbf2', 'rbf3', 'polynomial']
+version = versions[3]
 unified_color = True
 shrink = 0.69
 cbtit_y = -5
 surface = False
-save = False
+save = True
 
-if version == 'rbf':
-    f = rbf2d
-if version == 'polynomial':
+if version is 'rbf':
+    f = rbf
+    clean = False
+if version is 'rbf2':
+    f = rbf2
+    clean = True
+if version is 'rbf3':
+    f = rbf3
+    clean = True
+if version is 'polynomial':
     f = poly2
+    clean = True
 
-if plane == 'z=0':
+if plane is 'z=0':
     quirk = 'zzero'
-if plane == 'y=0':
+if plane is 'y=0':
     quirk = 'yzero'
-if plane == 'x=10':
+if plane is 'x=10':
     quirk = 'xten'
-if plane == 'x=-10':
+if plane is 'x=-10':
     quirk = 'xminusten'
 
 filenamestart = len(quirk)
@@ -242,6 +306,9 @@ try:
 except:
     u_mosaic, v_mosaic, w_mosaic = interpolate_all(fill=fill, plane=plane, version=version, quirk=quirk, filenamestart=filenamestart, var=re.findall(r'-?\d+', plane)[0], f=f)
 
+if clean is True:
+    clean_field()
+
 """
 Plot
 """
@@ -249,11 +316,11 @@ Plot
 # Subplot setup
 fig = mplPlotter(light=True).setup2d(figsize=(20, 5))
 
-y_ticks = 8
-x_ticks = 9 if plane == 'y=0' or plane == 'z=0' else 8
+y_ticks = 4
+x_ticks = 5 if plane == 'y=0' or plane == 'z=0' else 4
 degree = 2
-tsize=20
-axsize = 20
+tsize=25
+axsize = 25
 pad = 15
 tit_y = 1.05
 cbtit_size = 15
@@ -354,7 +421,8 @@ if surface is True:
                                                           cb_title='{} $[m/s]$'.format(comp),
                                                           cb_title_weight='bold',
                                                           cb_top_title_y=1.1,
-                                                          cb_title_size=cbtit_size
+                                                          cb_title_size=cbtit_size,
+                                                          cb_nticks=5
                                                           )
 
     """
@@ -390,7 +458,8 @@ if surface is True:
                                                           cb_title='{} $[m/s]$'.format(comp),
                                                           cb_title_weight='bold',
                                                           cb_top_title_y=1.1,
-                                                          cb_title_size=cbtit_size
+                                                          cb_title_size=cbtit_size,
+                                                          cb_nticks=5
                                                           )
 
     """
@@ -426,7 +495,8 @@ if surface is True:
                                                           cb_title='{} $[m/s]$'.format(comp),
                                                           cb_title_weight='bold',
                                                           cb_top_title_y=1.1,
-                                                          cb_title_size=cbtit_size
+                                                          cb_title_size=cbtit_size,
+                                                          cb_nticks=5
                                                           )
 
     if save is True:
@@ -475,7 +545,8 @@ else:
                                                               x_tick_number=x_ticks,
                                                               y_tick_number=y_ticks,
                                                               more_subplots_left=True,
-                                                              shrink=shrink
+                                                              shrink=shrink,
+                                                              cb_nticks=5
                                                               )
 
     """
@@ -508,7 +579,8 @@ else:
                                                               cb_title='{} $[m/s]$'.format(comp),
                                                               cb_title_weight='bold',
                                                               cb_top_title_y=1.1,
-                                                              cb_title_size=cbtit_size
+                                                              cb_title_size=cbtit_size,
+                                                              cb_nticks=5
                                                               )
 
     """
@@ -541,7 +613,8 @@ else:
                                                               cb_title='{} $[m/s]$'.format(comp),
                                                               cb_title_weight='bold',
                                                               cb_top_title_y=1.1,
-                                                              cb_title_size=cbtit_size
+                                                              cb_title_size=cbtit_size,
+                                                              cb_nticks=5
                                                               )
 
     """
@@ -610,11 +683,30 @@ else:
     ax3.add_patch(sphere)
 
     if save is True:
-        if version == '1.0':
-            plt.savefig(os.path.join(img_path, '3DRBF_Ensemble_Averaging_{}.png'.format(plane)),
-                        dpi=150)
-        if version == 'polynomial':
-            plt.savefig(os.path.join(img_path, '3DPolynomial_Ensemble_Averaging_{}.png'.format(plane)),
-                            dpi=150)
+        plt.savefig(os.path.join(img_path, '3D{}_Ensemble_Averaging_{}.png'.format(version, plane)),
+                    dpi=150)
+
+
+def max_min_avg_std():
+    data = np.array([['Maximum'],
+                     ['u: ', u_mosaic.max()],
+                     ['v: ', v_mosaic.max()],
+                     ['w: ', w_mosaic.max()],
+                     ['Minimum'],
+                     ['u: ', u_mosaic.min()],
+                     ['v: ', v_mosaic.min()],
+                     ['w: ', w_mosaic.min()],
+                     ['Mean'],
+                     ['u: ', u_mosaic.mean()],
+                     ['v: ', v_mosaic.mean()],
+                     ['w: ', w_mosaic.mean()],
+                     ['Standard deviation'],
+                     ['u: ', u_mosaic.std()],
+                     ['v: ', v_mosaic.std()],
+                     ['w: ', w_mosaic.std()]]
+                    )
+    np.savetxt(os.path.join(os.path.join(data_analysis, r'data\num_error_metrics\interpolation_comparison'), '{}.txt'.format(version)), data, fmt='%s')
+
+max_min_avg_std()
 
 plt.show()
