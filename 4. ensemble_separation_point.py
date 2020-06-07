@@ -254,7 +254,7 @@ except:
 ------------------------------------------------------------------------------------------------------------------------
 """
 
-def separation_point(method, field_u, field_w):
+def separation_point(method, field_u, field_w, save=False):
     radius = 80
     theta = np.linspace(0,120,120)
     theta = theta*2*np.pi/360
@@ -284,7 +284,7 @@ def separation_point(method, field_u, field_w):
         u_tab.append(val_u)
         w_tab.append(val_w)
 
-    max_idx_dif = max(range(len(dif_utab)), key = dif_utab.__getitem__)
+    max_idx_dif = max(range(len(dif_utab)), key=dif_utab.__getitem__)
 
     theta_sep = theta[max_idx_dif]
 
@@ -334,10 +334,11 @@ def separation_point(method, field_u, field_w):
     ax1.axvline(x=real_theta_sep, ymin=-5, ymax=15, c='green', linewidth=line_thickness, label=r'$\mathit{\theta_{sep}}$' + r'$ = {}^\circ$'.format(np.round(real_theta_sep/np.pi*180, 2)))
     ax1.legend(loc=legendloc, fontsize=21)
     plt.tight_layout()
-    plt.savefig(os.path.join(img_path, 'sep_point_velocity.png'), dpi=150)
+    if save is True:
+        plt.savefig(os.path.join(img_path, 'sep_point_velocity.png'), dpi=150)
     plt.show()
 
     return theta_sep, u_tab, w_tab, theta
 
 
-theta_sep, u_tab, w_tab, theta = separation_point(method='rbf', field_u=u_mosaic, field_w=w_mosaic)
+theta_sep, u_tab, w_tab, theta = separation_point(method='rbf', field_u=u_mosaic, field_w=w_mosaic, save=False)
